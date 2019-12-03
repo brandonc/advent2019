@@ -3,6 +3,7 @@ package tools
 import (
 	"bufio"
 	"bytes"
+	"io"
 	"os"
 	"strconv"
 )
@@ -25,41 +26,41 @@ func Readlines(f *os.File) (<-chan string, error) {
 	return chnl, nil
 }
 
-func ReadInts(f *os.File) []int {
-	ScanCSV := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-		commaidx := bytes.IndexByte(data, ',')
-		if commaidx > 0 {
-			// we need to return the next position
-			buffer := data[:commaidx]
-			return commaidx + 1, bytes.TrimSpace(buffer), nil
-		}
-
-		// if we are at the end of the string, just return the entire buffer
-		if atEOF {
-			// but only do that when there is some data. If not, this might mean
-			// that we've reached the end of our input CSV string
-			if len(data) > 0 {
-				return len(data), bytes.TrimSpace(data), nil
-			}
-		}
-
-		// when 0, nil, nil is returned, this is a signal to the interface to read
-		// more data in from the input reader. In this case, this input is our
-		// string reader and this pretty much will never occur.
-		return 0, nil, nil
+func ScanCSV(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	commaidx := bytes.IndexByte(data, ',')
+	if commaidx > 0 {
+		// we need to return the next position
+		buffer := data[:commaidx]
+		return commaidx + 1, bytes.TrimSpace(buffer), nil
 	}
 
+	// if we are at the end of the string, just return the entire buffer
+	if atEOF {
+		// but only do that when there is some data. If not, this might mean
+		// that we've reached the end of our input CSV string
+		if len(data) > 0 {
+			return len(data), bytes.TrimSpace(data), nil
+		}
+	}
+
+	// when 0, nil, nil is returned, this is a signal to the interface to read
+	// more data in from the input reader. In this case, this input is our
+	// string reader and this pretty much will never occur.
+	return 0, nil, nil
+}
+
+func ReadInts(f io.Reader) []int {
 	scanner := bufio.NewScanner(f)
 	scanner.Split(ScanCSV)
 
 	var numbers []int
 	for scanner.Scan() {
-		numbers = append(numbers, toInt(scanner.Text()))
+		numbers = append(numbers, ToInt(scanner.Text()))
 	}
 	return numbers
 }
 
-func toInt(s string) int {
+func ToInt(s string) int {
 	result, err := strconv.Atoi(s)
 	check(err)
 	return result
@@ -69,4 +70,12 @@ func check(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// Abs returns the absolute value of x.
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
