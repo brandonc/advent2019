@@ -1,4 +1,4 @@
-module day01
+module github.com/brandonc/advent2019
 
 go 1.13
 

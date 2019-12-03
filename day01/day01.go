@@ -1,7 +1,8 @@
-package main
+package day01
 
 import (
 	"fmt"
+	"github.com/brandonc/advent2019/tools"
 	"os"
 	"strconv"
 )
@@ -23,8 +24,8 @@ func module_fuel(weight int) (int, int) {
 	return fuel, more_fuel
 }
 
-func main() {
-	scanner, err := Readlines(os.Stdin)
+func Run() {
+	scanner, err := tools.Readlines(os.Stdin)
 
 	if err != nil {
 		fmt.Println(err)
