@@ -2,10 +2,9 @@ package day06
 
 import (
 	"fmt"
+	"github.com/brandonc/advent2019/tools"
 	"os"
 	"strings"
-
-	"github.com/brandonc/advent2019/tools"
 )
 
 func distancefromCOM(orbits map[string]string, thing string) int {
